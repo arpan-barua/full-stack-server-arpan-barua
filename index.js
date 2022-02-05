@@ -25,7 +25,7 @@ client.connect(err => {
   })
 
   app.get('/products', (req, res) => {
-    productCollection.find()
+    productCollection.find({})
     .toArray((err, products) => {
         res.send(products)
     })
@@ -54,4 +54,4 @@ app.delete('/deleteProduct/:id', (req, res) => {
   
 });
 
-app.listen(process.env.PORT || port)
+app.listen(process.env.PORT || port);
