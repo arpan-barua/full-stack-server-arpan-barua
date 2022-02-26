@@ -16,20 +16,22 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const productCollection = client.db("smartWatch").collection("products");
   const orderCollection = client.db("smartWatch").collection("orders"); 
+  const adminCollection = client.db("smartWatch").collection("admins"); 
+  
   app.post('/addProduct', (req, res) => {
     const newProduct = req.body;
     productCollection.insertOne(newProduct)
     .then(result => {
       res.send(result.insertedCount > 0);
     })
-  })
+  });
 
   app.get('/products', (req, res) => {
     productCollection.find()
     .toArray((err, products) => {
         res.send(products)
     })
-})
+});
 
 app.post("/addOrders", (req, res) => {
   const newOrders = req.body;
@@ -37,20 +39,35 @@ app.post("/addOrders", (req, res) => {
   .then(result => {
     res.send(result.insertedCount > 0)
   })
- })
+ });
 
  app.get('/orders', (req, res) => {
   orderCollection.find()
   .toArray((err, orders) => {
     res.send(orders)
   })
-})
+});
 
 app.delete('/deleteProduct/:id', (req, res) => {
   const id = ObjectID(req.params.id);
   productCollection.findOneAndDelete({_id:id})
   .then(documents => res.send(!!documents.value));
-})
+});
+
+app.post('/addAAdmin', (req, res) => {
+  const newAdmin = req.body;
+  adminCollection.insertOne(newAdmin)
+  .then(result => {
+    res.send(result.insertedCount > 0);
+  })
+});
+
+app.post("/isAdmin", (req, res) => {
+  const email = req.body.email;
+  adminCollection.find({ email: email }).toArray((err, admins) => {
+    res.send(admins.length > 0);
+  });
+});
   
 });
 
